@@ -1,7 +1,7 @@
 import Guide from "@/components/Guide";
 import { trim } from "@/utils/format";
 import { PageContainer } from "@ant-design/pro-components";
-import { useModel } from "@umijs/max";
+import { Outlet, useModel } from "@umijs/max";
 import styles from "./index.less";
 
 const HomePage: React.FC = () => {
@@ -9,7 +9,12 @@ const HomePage: React.FC = () => {
   return (
     <PageContainer ghost>
       <div className={styles.container}>
+        <h2>父路由插槽内容：</h2>
         <Guide name={trim(name)} />
+      </div>
+      <div>
+        <h2>子路由插槽内容：</h2>
+        <Outlet />
       </div>
     </PageContainer>
   );

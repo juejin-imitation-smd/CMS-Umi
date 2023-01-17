@@ -6,5 +6,6 @@ export default (initialState: API.UserInfo) => {
   );
   return {
     canSeeAdmin,
+    canReadPageA: Math.random() > 0.5,
   };
 };
