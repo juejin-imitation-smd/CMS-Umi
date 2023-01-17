@@ -2,6 +2,16 @@
 // 该文件由 OneAPI 自动生成，请勿手动修改！
 import { request } from "@umijs/max";
 
+export async function login(body: API.Login, options?: { [key: string]: any }) {
+  return request<API.UserInfo>("", {
+    method: "POST",
+    data: {
+      ...body,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /api/v1/queryUserList */
 export async function queryUserList(
   params: {
