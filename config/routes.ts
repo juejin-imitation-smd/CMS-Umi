@@ -31,6 +31,12 @@ const routes = [
     component: "./Table",
   },
   {
+    name: "作者模块",
+    path: "/author",
+    component: "./Author",
+    icon: "User",
+  },
+  {
     name: "404",
     path: "*",
     component: "./NotFound",
