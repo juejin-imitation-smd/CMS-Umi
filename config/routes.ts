@@ -31,6 +31,11 @@ const routes = [
     component: "./Table",
   },
   {
+    name: "广告管理",
+    path: "/advertisement",
+    component: "./Advertisement",
+  },
+  {
     name: "404",
     path: "*",
     component: "./NotFound",
