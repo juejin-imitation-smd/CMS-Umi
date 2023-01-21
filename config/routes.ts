@@ -36,8 +36,14 @@ const routes = [
     component: "./Advertisement",
   },
   {
+    name: "作者模块",
+    path: "/author",
+    component: "./Author",
+    icon: "User",
+  },
+  {
     name: "404",
-    path: "*",
+    path: "/*",
     component: "./NotFound",
     hideInMenu: true,
   },
