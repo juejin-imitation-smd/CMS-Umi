@@ -32,7 +32,7 @@ const routes = [
   },
   {
     name: "404",
-    path: "*",
+    path: "/*",
     component: "./NotFound",
     hideInMenu: true,
   },
