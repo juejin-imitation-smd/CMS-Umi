@@ -31,6 +31,11 @@ const routes = [
     component: "./Table",
   },
   {
+    name: "广告管理",
+    path: "/advertisement",
+    component: "./Advertisement",
+  },
+  {
     name: "作者模块",
     path: "/author",
     component: "./Author",
