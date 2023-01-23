@@ -42,6 +42,11 @@ const routes = [
     icon: "User",
   },
   {
+    name: "md渲染器测试",
+    path: "/mdrender",
+    component: "./MdRender",
+  },
+  {
     name: "404",
     path: "/*",
     component: "./NotFound",
