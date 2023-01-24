@@ -4,6 +4,7 @@
   "scripts": {
     "build": "max build",
     "dev": "max dev",
+    "eslint": "max lint --eslint-only",
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "prepare": "husky install",
