@@ -16,8 +16,6 @@ declare namespace AdvertisementInfoAPI {
   }
   interface PageInfo_AdvertisementInfo {
     total?: number;
-    page?: number;
-    size?: number;
     list: Array<AdvertisementInfo>;
   }
   interface AdvertisementInfo {

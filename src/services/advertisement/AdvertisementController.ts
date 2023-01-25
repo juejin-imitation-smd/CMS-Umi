@@ -1,29 +1,34 @@
 import { request } from "@umijs/max";
 // 获取广告列表
-export async function getAdvertisements(
-  body: AdvertisementInfoAPI.PageInfo_AdvertisementInfoVO,
+export async function queryAdvertisementList(
+  params: {
+    page: number;
+    size: number;
+  },
   options?: { [key: string]: any },
 ) {
   return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
-    "/getAdvertisements",
+    "/api/cms/getAdvertisements",
     {
       method: "GET",
-      data: body,
+      params: { ...params },
       ...(options || {}),
     },
   );
 }
 
-// 获取指定广告信息
-export async function advertisement(
-  id: number,
+// 获取指定广告内容
+export async function getAdvertisementDetail(
+  params: {
+    id: number;
+  },
   options?: { [key: string]: any },
 ) {
-  return request<AdvertisementInfoAPI.Result_AdvertisementInfo>(
-    "/advertisement",
+  return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
+    "/api/cms/advertisement",
     {
       method: "GET",
-      params: { id },
+      params: { ...params },
       ...(options || {}),
     },
   );
@@ -34,33 +39,44 @@ export async function addAdvertisement(
   body: AdvertisementInfoAPI.AdvertisementInfoVO,
   options?: { [key: string]: any },
 ) {
-  return request<API.Result>("/advertisement", {
-    method: "POST",
-    data: body,
-    ...(options || {}),
-  });
+  return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
+    "/api/cms/advertisement",
+    {
+      method: "POST",
+      data: body,
+      ...(options || {}),
+    },
+  );
 }
 
 // 修改广告
 export async function modifyAdvertisement(
-  body: AdvertisementInfoAPI.AdvertisementInfo,
+  body: ArticleAPI.ArticleInfo,
   options?: { [key: string]: any },
 ) {
-  return request<API.Result>("/advertisement", {
-    method: "PUT",
-    data: body,
-    ...(options || {}),
-  });
+  return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
+    "/api/cms/advertisement",
+    {
+      method: "PUT",
+      data: body,
+      ...(options || {}),
+    },
+  );
 }
 
 // 删除广告
 export async function deleteAdvertisement(
-  id: number,
+  params: {
+    id: number;
+  },
   options?: { [key: string]: any },
 ) {
-  return request<API.Result>("/advertisement", {
-    method: "DEL",
-    params: { id },
-    ...(options || {}),
-  });
+  return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
+    "/api/cms/advertisement",
+    {
+      method: "DELETE",
+      params: { ...params },
+      ...(options || {}),
+    },
+  );
 }
