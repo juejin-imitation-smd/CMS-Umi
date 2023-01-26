@@ -156,7 +156,7 @@ const categories = [
 ];
 
 export default {
-  "GET api/cms/column": (req: any, res: any) => {
+  "GET /api/cms/column": (req: any, res: any) => {
     res.json({
       code: 200,
       msg: "ok",
