@@ -387,7 +387,7 @@ const CategoryPage: React.FC = () => {
             });
             return item;
           });
-          console.log("chekc", data);
+          // console.log("chekc", data);
 
           return {
             data: data.list,
