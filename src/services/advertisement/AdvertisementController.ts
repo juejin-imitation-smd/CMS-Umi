@@ -1,10 +1,7 @@
 import { request } from "@umijs/max";
 // 获取广告列表
 export async function queryAdvertisementList(
-  params: {
-    page: number;
-    size: number;
-  },
+  params: AdvertisementInfoAPI.PageInfo_AdvertisementInfoVO,
   options?: { [key: string]: any },
 ) {
   return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
@@ -24,7 +21,7 @@ export async function getAdvertisementDetail(
   },
   options?: { [key: string]: any },
 ) {
-  return request<AdvertisementInfoAPI.Result_PageInfo_AdvertisementInfo>(
+  return request<AdvertisementInfoAPI.Result_AdvertisementInfo>(
     "/api/cms/advertisement",
     {
       method: "GET",
