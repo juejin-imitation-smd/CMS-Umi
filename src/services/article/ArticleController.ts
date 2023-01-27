@@ -4,6 +4,7 @@ export async function queryArticleList(
   params: {
     page: number;
     size: number;
+    title: string;
   },
   options?: { [key: string]: any },
 ) {
@@ -24,7 +25,7 @@ export async function getArticleDetail(
   },
   options?: { [key: string]: any },
 ) {
-  return request<ArticleAPI.Result_PageInfo_ArticleInfo>("/api/cms/article", {
+  return request<ArticleAPI.Result_ArticleInfo>("/api/cms/article", {
     method: "GET",
     params: { ...params },
     ...(options || {}),
@@ -65,6 +66,18 @@ export async function deleteArticle(
   return request<ArticleAPI.Result_PageInfo_ArticleInfo>("/api/cms/article", {
     method: "DELETE",
     params: { ...params },
+    ...(options || {}),
+  });
+}
+
+// 获取分类和标签
+export async function queryLabel(options?: { [key: string]: any }) {
+  return request<ArticleAPI.Result_PageInfo_LabelInfo>("/api/cms/column", {
+    method: "GET",
+    params: {
+      page: "",
+      size: "",
+    },
     ...(options || {}),
   });
 }

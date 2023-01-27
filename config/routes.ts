@@ -34,11 +34,37 @@ const routes = [
     name: "文章管理",
     path: "/article",
     component: "./Article",
+    icon: "User",
+  },
+  {
+    path: "/article/add",
+    component: "./Article/Add",
+    hideInMenu: true,
+    menuRender: false,
+  },
+  {
+    path: "/article/edit/:id",
+    component: "./Article/Edit",
+    hideInMenu: true,
+    menuRender: false,
   },
   {
     name: "广告管理",
     path: "/advertisement",
     component: "./Advertisement",
+    icon: "User",
+  },
+  {
+    path: "/advertisement/add",
+    component: "./Advertisement/Add",
+    hideInMenu: true,
+    menuRender: false,
+  },
+  {
+    path: "/advertisement/edit/:id",
+    component: "./Advertisement/Edit",
+    hideInMenu: true,
+    menuRender: false,
   },
   {
     name: "作者模块",
