@@ -8,12 +8,13 @@ import {
 import services from "@/services";
 import styles from "./index.module.less";
 
-const { UserController } = services;
+const { login } = services.LoginController;
 
 const LoginPage: React.FC = () => {
-  const onLogin = async (values: API.Login) => {
-    let userInfo = await UserController.login(values);
-    console.log(userInfo);
+  const onLogin = async (values: LoginAPI.LoginInfoVO) => {
+    let userInfo = await login(values);
+
+    console.log(userInfo, document.cookie);
   };
   return (
     <ProConfigProvider hashed={false}>
@@ -25,7 +26,7 @@ const LoginPage: React.FC = () => {
           onFinish={onLogin}
         >
           <ProFormText
-            name="username"
+            name="user_name"
             fieldProps={{
               size: "large",
               prefix: <UserOutlined className={"prefixIcon"} />,
