@@ -38,7 +38,7 @@ declare namespace CategoryAPI {
   type Request_AddCategory = {
     name: string;
     url: string;
-    labels: string[];
+    labels: { label: string }[];
   };
   type Result_AddCategoy = Result__<{ id: string }>;
 
@@ -47,7 +47,7 @@ declare namespace CategoryAPI {
     id: number;
     name: string;
     url: string;
-    labels: string[];
+    labels: { label: string }[];
   };
   type Result_ModifyCategory = Result__<null>;
 

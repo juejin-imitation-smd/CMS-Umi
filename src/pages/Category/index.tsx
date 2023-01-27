@@ -24,7 +24,7 @@ const handleCategoryAdd = async (categoryInfo: CategoryAPI.CategoryInfo) => {
   const { code, msg } = await addCategory({
     name,
     url,
-    labels: labels.map(({ label }) => label),
+    labels,
   });
   return { success: code === 200, msg: msg };
 };
@@ -38,7 +38,7 @@ const handleCategoryUpdate = async (categoryInfo: CategoryAPI.CategoryInfo) => {
     id,
     name,
     url,
-    labels: labels.map(({ label }) => label),
+    labels,
   });
   return { success: code === 200, msg: msg };
 };
@@ -121,24 +121,82 @@ const CategoryPage: React.FC = () => {
    * @Description: 新增标签
    */
   const enterTagCreateForm = async (tag: CategoryAPI.TagInfo) => {
-    // TODO
     tag.category = currentTagParentCategory.current;
-    console.log("create", tag);
+    const { label, category } = tag;
+    if (category === undefined) {
+      message.error("网络繁忙");
+      return;
+    }
+    if (category?.labels.some((item) => item.label === label)) {
+      message.warning("已存在当前名称的标签");
+      return;
+    }
+    category.labels.push({ id: NaN, label });
+
+    const { success, msg } = await handleCategoryUpdate(category);
+    if (success) {
+      handleTagCreateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("标签新增成功");
+    } else {
+      message.error(msg);
+    }
   };
   /**
    * @Description: 删除标签
    */
-  const deleteTag = (tag: CategoryAPI.TagInfo) => {
-    // TODO
-    console.log("delete", tag);
+  const deleteTag = async (tag: CategoryAPI.TagInfo) => {
+    const { id, label, category } = tag;
+    // 若category不存在则是request数据时处理不当
+    if (category === undefined) {
+      message.error("网络繁忙");
+      return;
+    }
+    let index: number = category.labels.findIndex(
+      (item) => item.label === label && item.id === id,
+    );
+    // 若不存在则数据存在问题
+    if (index === -1) {
+      message.error("当前标签不存在，可能已删除");
+      return;
+    }
+    category.labels.splice(index, 1);
+
+    const { success, msg } = await handleCategoryUpdate(category);
+    if (success) {
+      actionRef.current!.reload();
+      message.success("标签删除成功");
+    } else {
+      message.error(msg);
+    }
   };
   /**
    * @Description: 更新标签
    */
-  const enterTagUpdateForm = (tag: CategoryAPI.TagInfo) => {
-    // TODO
+  const enterTagUpdateForm = async (tag: CategoryAPI.TagInfo) => {
     tag.category = currentTagParentCategory.current;
-    console.log("update", tag);
+    const { id, label, category } = tag;
+    // 若category不存在则是request数据时处理不当
+    if (category === undefined) {
+      message.error("网络繁忙");
+      return;
+    }
+    let index: number = category.labels.findIndex((item) => item.id === id);
+    // 若不存在则数据存在问题
+    if (index === -1) {
+      message.error("当前标签不存在，可能已删除");
+      return;
+    }
+    category.labels[index].label = label;
+
+    const { success, msg } = await handleCategoryUpdate(category);
+    if (success) {
+      handleTagUpdateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("标签修改成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /* 表格配置 */
@@ -237,6 +295,12 @@ const CategoryPage: React.FC = () => {
       formItemProps: {
         hidden: tagCreateModalVisible,
       },
+      renderFormItem: (_, { type, value, defaultRender }) => {
+        if (type === "form" && value) {
+          return <Input value={value} disabled />;
+        }
+        return defaultRender(_);
+      },
     },
     {
       title: "标签名",
@@ -266,12 +330,15 @@ const CategoryPage: React.FC = () => {
               }, 0);
             }}
           />
-          <Button
-            danger
-            shape="circle"
-            icon={<DeleteOutlined />}
-            onClick={() => deleteTag(record)}
-          />
+          <Popconfirm
+            title="删除标签"
+            description="是否确认删除该标签？"
+            onConfirm={() => deleteTag(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger shape="circle" icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -313,13 +380,14 @@ const CategoryPage: React.FC = () => {
           data.list.forEach((item) => {
             const _item = {
               ...item,
-              labels: [],
+              labels: JSON.parse(JSON.stringify(item.labels ?? [])),
             };
             item.labels.forEach((label) => {
               label.category = _item;
             });
             return item;
           });
+          console.log("chekc", data);
 
           return {
             data: data.list,
