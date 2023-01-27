@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useEffect } from "react";
 import { Modal, message } from "antd";
 import {
   ProForm,
@@ -8,37 +8,44 @@ import {
 import { Rule } from "antd/es/form";
 import services from "@/services";
 
-const { addAdvertisement } = services.AdvertisementController;
+const { modifyAdvertisement } = services.AdvertisementController;
 
-interface CreateFormProps {
+interface UpdateFormProps {
+  values: any;
   modalVisible: boolean;
   onCancel: () => void;
 }
 
 const rules: Rule[] = [{ required: true }];
 
-const CreateForm: React.FC<PropsWithChildren<CreateFormProps>> = (props) => {
-  const { modalVisible, onCancel } = props;
+const UpdateForm: React.FC<PropsWithChildren<UpdateFormProps>> = (props) => {
+  const { values, modalVisible, onCancel } = props;
+  const [form] = ProForm.useForm();
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (formValues: any) => {
     const body = {
-      ...values,
+      ...formValues,
+      id: values.id,
     };
-    await addAdvertisement(body);
+    await modifyAdvertisement(body);
     onCancel();
     message.success("提交成功");
   };
 
+  useEffect(() => {
+    form.setFieldsValue({ ...values });
+  }, [values]);
+
   return (
     <Modal
       destroyOnClose
-      title="创建广告"
+      title="编辑广告信息"
       width={420}
       open={modalVisible}
       onCancel={() => onCancel()}
       footer={null}
     >
-      <ProForm grid onFinish={onSubmit}>
+      <ProForm form={form} grid onFinish={onSubmit}>
         <ProFormText label="标题" name="title" rules={rules} />
         <ProFormTextArea label="内容" name="content" rules={rules} />
         <ProFormText label="封面地址" name="image" />
@@ -47,4 +54,4 @@ const CreateForm: React.FC<PropsWithChildren<CreateFormProps>> = (props) => {
   );
 };
 
-export default CreateForm;
+export default UpdateForm;
