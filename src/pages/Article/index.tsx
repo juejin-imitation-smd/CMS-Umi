@@ -1,4 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
+import { useNavigate } from "@umijs/max";
+import { DefaultOptionType } from "antd/es/select";
+import { formatTime } from "@/utils/format";
 import { Button, Space, Tag, Popconfirm, message } from "antd";
 import {
   ActionType,
@@ -7,11 +10,9 @@ import {
   PageContainer,
 } from "@ant-design/pro-components";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import CreateForm from "./components/CreateForm";
-import UpdateForm from "./components/UpdateForm";
 import services from "@/services";
 
-const { queryArticleList, getArticleDetail, deleteArticle } =
+const { queryArticleList, queryLabel, deleteArticle } =
   services.ArticleController;
 
 /**
@@ -35,19 +36,33 @@ const handleRemove = async (articleId: number) => {
 };
 
 /**
- * 文章管理页面
+ *  获取文章标签和类型
+ * @param selectedRows
+ */
+export const getLabelAndSubTab = async () => {
+  const {
+    data: { list },
+  } = await queryLabel();
+  const labelOptions: DefaultOptionType[] = [];
+  list.forEach(({ name, labels }) => {
+    labelOptions.push({ label: name, value: name, labels });
+  });
+  return labelOptions;
+};
+
+/**
+ * @Description: 文章管理页面
  */
 const ArticleList: React.FC<unknown> = () => {
+  const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
-  const [updateModalValues, setUpdateModalValues] = useState({});
-  const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
   const column: ProColumns<ArticleAPI.ArticleInfo>[] = [
     {
       title: "ID",
       dataIndex: "id",
       width: 80,
       ellipsis: true,
+      hideInSearch: true,
       align: "center",
       formItemProps: {},
     },
@@ -65,6 +80,7 @@ const ArticleList: React.FC<unknown> = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 160,
+      render: (_, record) => formatTime(+record.time),
     },
     {
       title: "分类",
@@ -149,9 +165,7 @@ const ArticleList: React.FC<unknown> = () => {
             shape="circle"
             icon={<EditOutlined />}
             onClick={async () => {
-              const { data } = await getArticleDetail({ id: record.id });
-              setUpdateModalValues({ ...data });
-              setUpdateModalVisible(true);
+              navigate(`/article/edit/${record.id}`);
             }}
           />
           <Popconfirm
@@ -188,35 +202,23 @@ const ArticleList: React.FC<unknown> = () => {
             key="1"
             type="primary"
             onClick={() => {
-              setCreateModalVisible(true);
+              navigate("/article/add");
             }}
           >
             新建
           </Button>,
         ]}
-        request={async ({ current, pageSize }) => {
+        request={async ({ current, pageSize, title = "" }) => {
           const { data } = await queryArticleList({
             page: current as number,
             size: pageSize as number,
+            title,
           });
           return {
             data: data?.list || [],
             success: true,
             total: data?.total,
           };
-        }}
-      />
-      <CreateForm
-        modalVisible={createModalVisible}
-        onCancel={() => {
-          setCreateModalVisible(false);
-        }}
-      />
-      <UpdateForm
-        values={updateModalValues}
-        modalVisible={updateModalVisible}
-        onCancel={() => {
-          setUpdateModalVisible(false);
         }}
       />
     </PageContainer>

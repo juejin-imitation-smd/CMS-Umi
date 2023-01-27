@@ -1,4 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
+import { useNavigate } from "@umijs/max";
+import { formatTime } from "@/utils/format";
 import { Button, Space, Popconfirm, message } from "antd";
 import {
   ActionType,
@@ -7,15 +9,13 @@ import {
   PageContainer,
 } from "@ant-design/pro-components";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import CreateForm from "./components/CreateForm";
-import UpdateForm from "./components/UpdateForm";
 import services from "@/services";
 
-const { queryAdvertisementList, getAdvertisementDetail, deleteAdvertisement } =
+const { queryAdvertisementList, deleteAdvertisement } =
   services.AdvertisementController;
 
 /**
- *  删除文章
+ *  删除广告
  * @param selectedRows
  */
 const handleRemove = async (articleId: number) => {
@@ -38,16 +38,15 @@ const handleRemove = async (articleId: number) => {
  * 广告管理页面
  */
 const AdvertisementList: React.FC<unknown> = () => {
+  const navigate = useNavigate();
   const actionRef = useRef<ActionType>();
-  const [updateModalValues, setUpdateModalValues] = useState({});
-  const [createModalVisible, setCreateModalVisible] = useState<boolean>(false);
-  const [updateModalVisible, setUpdateModalVisible] = useState<boolean>(false);
   const column: ProColumns<AdvertisementInfoAPI.AdvertisementInfo>[] = [
     {
       title: "ID",
       dataIndex: "id",
       width: 80,
       ellipsis: true,
+      hideInSearch: true,
       align: "center",
       formItemProps: {},
     },
@@ -56,20 +55,31 @@ const AdvertisementList: React.FC<unknown> = () => {
       dataIndex: "title",
       align: "center",
       ellipsis: true,
-      width: 180,
+      width: 140,
+    },
+    {
+      title: "时间",
+      dataIndex: "time",
+      align: "center",
+      ellipsis: true,
+      hideInSearch: true,
+      width: 160,
+      render: (_, record) => formatTime(+record.time),
     },
     {
       title: "内容",
       dataIndex: "content",
       align: "center",
       ellipsis: true,
+      hideInSearch: true,
+      width: 240,
     },
     {
       title: "封面",
       dataIndex: "image",
       align: "center",
       hideInSearch: true,
-      width: 180,
+      width: 160,
       render: (text, record) => (
         <img
           style={{ width: 60, height: 40 }}
@@ -77,6 +87,27 @@ const AdvertisementList: React.FC<unknown> = () => {
           alt={record.title}
         />
       ),
+    },
+    {
+      title: "阅读数",
+      dataIndex: "view_count",
+      align: "center",
+      hideInSearch: true,
+      width: 90,
+    },
+    {
+      title: "点赞数",
+      dataIndex: "like_count",
+      align: "center",
+      hideInSearch: true,
+      width: 90,
+    },
+    {
+      title: "评论数",
+      dataIndex: "comment_count",
+      align: "center",
+      hideInSearch: true,
+      width: 90,
     },
     {
       title: "配置",
@@ -91,9 +122,7 @@ const AdvertisementList: React.FC<unknown> = () => {
             shape="circle"
             icon={<EditOutlined />}
             onClick={async () => {
-              const { data } = await getAdvertisementDetail({ id: record.id });
-              setUpdateModalValues({ ...data });
-              setUpdateModalVisible(true);
+              navigate(`/advertisement/edit/${record.id}`);
             }}
           />
           <Popconfirm
@@ -122,6 +151,7 @@ const AdvertisementList: React.FC<unknown> = () => {
           actionRef={actionRef}
           rowKey="id"
           columns={column}
+          scroll={{ x: 1300 }}
           pagination={{
             showSizeChanger: true,
           }}
@@ -130,38 +160,23 @@ const AdvertisementList: React.FC<unknown> = () => {
               key="1"
               type="primary"
               onClick={() => {
-                setCreateModalVisible(true);
+                navigate("/advertisement/add");
               }}
             >
               新建
             </Button>,
           ]}
-          request={async ({ current, pageSize }) => {
+          request={async ({ current, pageSize, title = "" }) => {
             const { data } = await queryAdvertisementList({
               page: current as number,
               size: pageSize as number,
+              title,
             });
             return {
               data: data?.list || [],
               success: true,
               total: data?.total,
             };
-          }}
-          editable={{
-            type: "multiple",
-          }}
-        />
-        <CreateForm
-          modalVisible={createModalVisible}
-          onCancel={() => {
-            setCreateModalVisible(false);
-          }}
-        />
-        <UpdateForm
-          values={updateModalValues}
-          modalVisible={updateModalVisible}
-          onCancel={() => {
-            setUpdateModalVisible(false);
           }}
         />
       </PageContainer>

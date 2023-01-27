@@ -7,7 +7,9 @@ declare namespace AdvertisementInfoAPI {
   interface Result_AdvertisementInfo {
     code?: number;
     msg?: string;
-    data: AdvertisementInfo;
+    data: {
+      advertisement: AdvertisementInfo;
+    };
   }
   interface Result {
     code?: number;
@@ -21,8 +23,14 @@ declare namespace AdvertisementInfoAPI {
   interface AdvertisementInfo {
     id: number;
     title: string;
+    time: string;
     content: string;
     image: string;
+    author_id: number;
+    author: AuthorAPI.AuthorInfo;
+    view_count: number;
+    like_count: number;
+    comment_count: number;
   }
   interface AdvertisementInfoVO {
     title?: string;
@@ -30,11 +38,8 @@ declare namespace AdvertisementInfoAPI {
     image?: string;
   }
   interface PageInfo_AdvertisementInfoVO {
-    page?: number;
-    size?: number;
-    query?: {
-      title?: string;
-      content?: string;
-    };
+    page: number;
+    size: number;
+    title: string;
   }
 }

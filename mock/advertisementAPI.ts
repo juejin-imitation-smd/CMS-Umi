@@ -6,6 +6,9 @@ const advertisements = [
       "书任可通府下利便多集具更先参计火。回周正也维为设我系高自就近车住回至。亲两火就再南口造些为组每知型。满文为切真些元干转处状办至给术气。则在志山消力由日个前象商热始则。象取海路建国广进真华价叫六科机拉不。",
     image:
       "https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad2e4d8fa38a4c8384def5cfe22adc70~tplv-k3u1fbpfcp-no-mark:240:240:240:160.awebp?",
+    view_count: 2640,
+    like_count: 56,
+    comment_count: 1,
   },
   {
     id: 1,
