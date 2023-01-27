@@ -53,7 +53,7 @@ declare namespace CategoryAPI {
 
   /* 删除类别 */
   type Request_DeleteCategory = {
-    id: string;
+    id: number;
   };
   type Result_DeleteCategory = Result__<null>;
 }

@@ -5,11 +5,6 @@ const TagsTableRender = (
   record: CategoryAPI.CategoryInfo,
   tagColumns: ProColumns<CategoryAPI.TagInfo>[],
 ) => {
-  const dataSource = record.labels.map((item) => ({
-    ...item,
-    category: record,
-  }));
-
   /* 渲染内容 */
   return (
     <ProTable
@@ -18,7 +13,7 @@ const TagsTableRender = (
       search={false}
       columns={tagColumns}
       options={false}
-      dataSource={dataSource}
+      dataSource={record.labels}
       pagination={{
         defaultPageSize: 5,
         showSizeChanger: true,

@@ -9,39 +9,60 @@ import React, { useRef, useState } from "react";
 
 import API from "@/services";
 import TagsTableRender from "./components/TagsTableRender";
-import { Button, Space } from "antd";
+import { Button, Space, message, Input, Popconfirm } from "antd";
 import ModalForm from "./components/ModalForm";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-const { queryCategoryList } = API.CategoryController;
+const { queryCategoryList, addCategory, modifyCategory, deleteCategory } =
+  API.CategoryController;
 
 /* CURD逻辑封装 */
 /**
  * @Description: 新增类别
  */
 const handleCategoryAdd = async (categoryInfo: CategoryAPI.CategoryInfo) => {
-  console.log("add", categoryInfo);
+  const { name, url, labels = [] } = categoryInfo;
+  const { code, msg } = await addCategory({
+    name,
+    url,
+    labels: labels.map(({ label }) => label),
+  });
+  return { success: code === 200, msg: msg };
 };
 
 /**
  * @Description: 修改类别
  */
 const handleCategoryUpdate = async (categoryInfo: CategoryAPI.CategoryInfo) => {
-  console.log("update", categoryInfo);
+  const { id, name, url, labels = [] } = categoryInfo;
+  const { code, msg } = await modifyCategory({
+    id,
+    name,
+    url,
+    labels: labels.map(({ label }) => label),
+  });
+  return { success: code === 200, msg: msg };
 };
 
 /**
  * @Description: 删除类别
  */
 const handleCategoryDelete = async (categoryInfo: CategoryAPI.CategoryInfo) => {
-  console.log("delete", categoryInfo);
+  const { id } = categoryInfo;
+  const { code, msg } = await deleteCategory({
+    id,
+  });
+  return { success: code === 200, msg: msg };
 };
 
 const CategoryPage: React.FC = () => {
+  const actionRef = useRef<ActionType>();
   /* 模态框配置 */
   const categoryUpdateModalRef = useRef<ProFormInstance>();
   const categoryModalResetCache = useRef<() => void>();
+  const currentCategoryLabels = useRef<CategoryAPI.TagInfo[]>([]);
   const tagUpdateModalRef = useRef<ProFormInstance>();
   const tagModalResetCache = useRef<() => void>();
+  const currentTagParentCategory = useRef<CategoryAPI.CategoryInfo>();
   const [categoryCreateModalVisible, handleCategoryCreateModalVisible] =
     useState<boolean>(false);
   const [categoryUpdateModalVisible, handleCategoryUpdateModalVisible] =
@@ -54,30 +75,54 @@ const CategoryPage: React.FC = () => {
   /**
    * @Description: 表单新建类别
    */
-  const enterCategoryCreateForm = (category: CategoryAPI.CategoryInfo) => {
-    // TODO
-    handleCategoryAdd(category);
+  const enterCategoryCreateForm = async (
+    category: CategoryAPI.CategoryInfo,
+  ) => {
+    const { success, msg } = await handleCategoryAdd(category);
+    if (success) {
+      handleCategoryCreateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("类别新建成功");
+    } else {
+      message.error(msg);
+    }
   };
   /**
    * @Description: 表单更新类别
    */
-  const enterCategoryUpdateForm = (category: CategoryAPI.CategoryInfo) => {
-    // TODO
-    handleCategoryUpdate(category);
+  const enterCategoryUpdateForm = async (
+    category: CategoryAPI.CategoryInfo,
+  ) => {
+    category.labels = category.labels ?? currentCategoryLabels.current ?? [];
+    const { success, msg } = await handleCategoryUpdate(category);
+    if (success) {
+      handleCategoryUpdateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("类别修改成功");
+    } else {
+      message.error(msg);
+    }
   };
   /**
    * @Description: 删除类别
    */
-  const deleteCategory = (category: CategoryAPI.CategoryInfo) => {
-    // TODO
-    handleCategoryDelete(category);
+  const deleteCategory = async (category: CategoryAPI.CategoryInfo) => {
+    const { success, msg } = await handleCategoryDelete(category);
+    if (success) {
+      handleCategoryUpdateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("类别删除成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /**
    * @Description: 新增标签
    */
-  const enterTagCreateForm = (tag: CategoryAPI.TagInfo) => {
+  const enterTagCreateForm = async (tag: CategoryAPI.TagInfo) => {
     // TODO
+    tag.category = currentTagParentCategory.current;
     console.log("create", tag);
   };
   /**
@@ -92,30 +137,43 @@ const CategoryPage: React.FC = () => {
    */
   const enterTagUpdateForm = (tag: CategoryAPI.TagInfo) => {
     // TODO
+    tag.category = currentTagParentCategory.current;
     console.log("update", tag);
   };
 
   /* 表格配置 */
-  const actionRef = useRef<ActionType>();
   const categoryColumns: ProColumns<CategoryAPI.CategoryInfo>[] = [
     {
       title: "类别ID",
       dataIndex: "id",
       align: "center",
       formItemProps: {
+        required: true,
         hidden: categoryCreateModalVisible,
+      },
+      renderFormItem: (_, { type, value, defaultRender }) => {
+        if (type === "form" && value) {
+          return <Input value={value} disabled />;
+        }
+        return defaultRender(_);
       },
     },
     {
       title: "类别名称",
       dataIndex: "name",
       align: "center",
+      formItemProps: {
+        required: true,
+      },
     },
     {
       title: "路由",
       dataIndex: "url",
       align: "center",
       hideInSearch: true,
+      formItemProps: {
+        required: true,
+      },
     },
     {
       title: "标签数",
@@ -138,6 +196,7 @@ const CategoryPage: React.FC = () => {
             shape="circle"
             icon={<EditOutlined />}
             onClick={async () => {
+              currentCategoryLabels.current = record.labels;
               /* 类别-更新模态框数据和重置回调函数 */
               handleCategoryUpdateModalVisible(true);
               setTimeout(() => {
@@ -153,14 +212,20 @@ const CategoryPage: React.FC = () => {
           <Button
             shape="circle"
             icon={<PlusOutlined />}
-            onClick={() => handleTagCreateModalVisible(true)}
+            onClick={() => {
+              currentTagParentCategory.current = record;
+              handleTagCreateModalVisible(true);
+            }}
           />
-          <Button
-            danger
-            shape="circle"
-            icon={<DeleteOutlined />}
-            onClick={() => deleteCategory(record)}
-          />
+          <Popconfirm
+            title="删除目录"
+            description="是否确认删除该目录？"
+            onConfirm={() => deleteCategory(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger shape="circle" icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -189,6 +254,7 @@ const CategoryPage: React.FC = () => {
             icon={<EditOutlined />}
             onClick={async () => {
               /* 标签-更新模态框数据和重置回调函数 */
+              currentTagParentCategory.current = record.category;
               handleTagUpdateModalVisible(true);
               setTimeout(() => {
                 if (tagUpdateModalRef.current) {
@@ -219,6 +285,7 @@ const CategoryPage: React.FC = () => {
         headerTitle="类别&标签表格"
         actionRef={actionRef}
         rowKey="id"
+        search={false}
         columns={categoryColumns}
         pagination={{
           showSizeChanger: true,
@@ -227,7 +294,9 @@ const CategoryPage: React.FC = () => {
           <Button
             key="1"
             type="primary"
-            onClick={() => handleCategoryCreateModalVisible(true)}
+            onClick={() => {
+              handleCategoryCreateModalVisible(true);
+            }}
           >
             新建类别
           </Button>,
@@ -240,7 +309,18 @@ const CategoryPage: React.FC = () => {
             size: pageSize ?? 10,
             page: current ?? 1,
           });
-          console.log("check", data);
+          /* 特殊处理标签数据，增加父子耦合 */
+          data.list.forEach((item) => {
+            const _item = {
+              ...item,
+              labels: [],
+            };
+            item.labels.forEach((label) => {
+              label.category = _item;
+            });
+            return item;
+          });
+
           return {
             data: data.list,
             success: true,

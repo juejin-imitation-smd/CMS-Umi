@@ -1,4 +1,4 @@
-import { RunTimeLayoutConfig } from "@umijs/max";
+import { RunTimeLayoutConfig, RequestConfig } from "@umijs/max";
 import { Route } from "antd/es/breadcrumb/Breadcrumb";
 import { ProBreadcrumb } from "@ant-design/pro-components";
 // 运行时配置
@@ -22,4 +22,9 @@ export const layout: RunTimeLayoutConfig = () => {
     },
     headerContentRender: () => <ProBreadcrumb />,
   };
+};
+
+export const request: RequestConfig = {
+  timeout: 3000,
+  baseURL: "http://47.96.134.75:3000",
 };
