@@ -67,10 +67,16 @@ const routes = [
     menuRender: false,
   },
   {
-    name: "作者模块",
+    name: "作者管理",
     path: "/author",
     component: "./Author",
     icon: "User",
+  },
+  {
+    name: "类别标签管理",
+    path: "/category",
+    component: "./Category",
+    icon: "Tags",
   },
   {
     name: "md渲染器测试",
