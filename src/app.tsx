@@ -4,7 +4,7 @@ import { ProBreadcrumb } from "@ant-design/pro-components";
 
 const baseURL =
   process.env.NODE_ENV === "development"
-    ? "http://47.96.134.75:3000"
+    ? "/proxy"
     : "http://47.96.134.75:3000";
 
 // 运行时配置

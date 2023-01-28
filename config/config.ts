@@ -12,4 +12,11 @@ export default defineConfig({
   },
   routes,
   npmClient: "pnpm",
+  proxy: {
+    "/proxy": {
+      target: "http://47.96.134.75:3000/",
+      changeOrigin: true,
+      pathRewrite: { "^/proxy": "" },
+    },
+  },
 });

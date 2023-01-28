@@ -7,38 +7,70 @@ import {
   FooterToolbar,
   ProFormInstance,
 } from "@ant-design/pro-components";
-import { queryAuthorList } from "@/services/author/AuthorController";
-import { Button, Space, Avatar, Modal } from "antd";
 import {
-  EditOutlined,
-  DeleteOutlined,
-  ExclamationCircleFilled,
-} from "@ant-design/icons";
+  addAuthor,
+  deleteAuthor,
+  modifyAuthor,
+  queryAuthorList,
+} from "@/services/author/AuthorController";
+import { Button, Space, Avatar, Input, message, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import EditForm from "./components/EditForm";
 import UpdateForm from "./components/UpdateForm";
-
-const { confirm } = Modal;
 
 /* CURD逻辑封装 */
 /**
  * @Description: 新增作者
  */
 const handleAuthorAdd = async (authorInfo: AuthorAPI.AuthorInfo) => {
-  console.log(authorInfo);
+  const { username, description, avatar, article_count = 0 } = authorInfo;
+  const { code, msg } = await addAuthor({
+    username,
+    description,
+    avatar,
+    article_count,
+  });
+  return { success: code === 200, msg: msg };
 };
 
 /**
  * @Description: 更新作者
  */
 const handleAuthorUpdate = async (authorInfo: AuthorAPI.AuthorInfo) => {
-  console.log(authorInfo);
+  const { id, username, description, avatar, article_count } = authorInfo;
+  const { code, msg } = await modifyAuthor({
+    username,
+    description,
+    avatar,
+    article_count,
+    id,
+  });
+  return { success: code === 200, msg: msg };
 };
 
 /**
  * @Description: 删除作者
  */
-const handleAuthorDelete = async (uid: string) => {
-  console.log(uid);
+const handleAuthorDelete = async (authorInfo: AuthorAPI.AuthorInfo) => {
+  const { id } = authorInfo;
+  const { code, msg } = await deleteAuthor({
+    id,
+  });
+  return { success: code === 200, msg: msg };
+};
+
+/**
+ * @Description: 批量删除
+ */
+const handleBatchAuthorDelete = async (
+  authorInfoList: AuthorAPI.AuthorInfo[],
+) => {
+  const reqList = authorInfoList.map(({ id }) => deleteAuthor({ id }));
+  const resList = await Promise.all(reqList);
+  const index = resList.findIndex((res) => res.code !== 200);
+  return index === -1
+    ? { success: true, msg: resList[0].msg }
+    : { success: false, msg: resList[index].msg };
 };
 
 const AuthorPage: React.FC<unknown> = () => {
@@ -68,46 +100,73 @@ const AuthorPage: React.FC<unknown> = () => {
   };
 
   /* updateModal-保存模态框数据修改 */
-  const handleUpdateModalSave = async (authorInfo: AuthorAPI.AuthorInfo) => {
-    handleAuthorUpdate(authorInfo);
+  const handleUpdateModalSave = async (author: AuthorAPI.AuthorInfo) => {
+    const { success, msg } = await handleAuthorUpdate(author);
+    if (success) {
+      handleUpdateModalVisible(false);
+      actionRef.current!.reload();
+      message.success("修改成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /* editModal-新建作者 */
-  const handleEditFromEnter = async (value: AuthorAPI.AuthorInfo) => {
-    handleAuthorAdd(value);
-    handleEditModalVisible(false);
+  const handleEditFromEnter = async (author: AuthorAPI.AuthorInfo) => {
+    const { success, msg } = await handleAuthorAdd(author);
+    if (success) {
+      handleEditModalVisible(false);
+      actionRef.current!.reload();
+      message.success("新建成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /* table-删除表单个例 */
-  const handleTableDeleteSimgleItem = async (uid: string) => {
-    confirm({
-      title: "是否确认删除该项",
-      icon: <ExclamationCircleFilled />,
-      onOk() {
-        handleAuthorDelete(uid);
-      },
-    });
-    return;
+  const handleTableDeleteSimgleItem = async (author: AuthorAPI.AuthorInfo) => {
+    const { success, msg } = await handleAuthorDelete(author);
+    if (success) {
+      handleEditModalVisible(false);
+      actionRef.current!.reload();
+      message.success("删除成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /* table-删除表单所选 */
   const handleTableDeleteSelected = async () => {
     const selection = selectedRowsState;
-    selection.forEach((item) => {
-      handleAuthorDelete(item.uid);
-    });
+    if (selection.length === 0) {
+      message.error("选项不可为空");
+      return;
+    }
+    const { success, msg } = await handleBatchAuthorDelete(selection);
+    if (success) {
+      actionRef.current!.reload();
+      message.success("批量删除成功");
+    } else {
+      message.error(msg);
+    }
   };
 
   /* 表格列表配置 */
   const columns: ProColumns<AuthorAPI.AuthorInfo>[] = [
     {
       title: "ID",
-      dataIndex: "uid",
+      dataIndex: "id",
       width: 80,
       ellipsis: true,
       align: "center",
       formItemProps: {
         hidden: editModalVisible,
+      },
+      renderFormItem: (_, { type, value, defaultRender }) => {
+        if (type === "form" && value) {
+          return <Input value={value} disabled />;
+        }
+        return defaultRender(_);
       },
     },
     {
@@ -166,15 +225,15 @@ const AuthorPage: React.FC<unknown> = () => {
             icon={<EditOutlined />}
             onClick={() => handleUpdateModalOpen(record)}
           />
-          <Button
-            danger
-            shape="circle"
-            icon={
-              <DeleteOutlined
-                onClick={() => handleTableDeleteSimgleItem(record.uid)}
-              />
-            }
-          />
+          <Popconfirm
+            title="删除作者"
+            description="是否确认删除该作者？"
+            onConfirm={() => handleTableDeleteSimgleItem(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger shape="circle" icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
@@ -191,7 +250,7 @@ const AuthorPage: React.FC<unknown> = () => {
       <ProTable<AuthorAPI.AuthorInfo>
         headerTitle="作者表格"
         actionRef={actionRef}
-        rowKey="uid"
+        rowKey="id"
         columns={columns}
         scroll={{ x: 100 }}
         pagination={{
@@ -213,9 +272,9 @@ const AuthorPage: React.FC<unknown> = () => {
           const { data } = await queryAuthorList({
             size: params.pageSize ?? 1,
             page: params.current ?? 1,
-            uid: params.uid ?? "",
             username: params.username ?? "",
           });
+          console.log("check", data);
           return {
             data: data.list,
             success: true,
