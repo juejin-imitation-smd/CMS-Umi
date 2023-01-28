@@ -2,7 +2,7 @@ declare namespace AuthorAPI {
   // 作者数据结构
   interface AuthorInfo {
     id: number;
-    usernme: string;
+    username: string;
     description: string;
     avatar: string;
     article_count: number;
@@ -41,7 +41,7 @@ declare namespace AuthorAPI {
     username: string;
     description: string;
     avatar: string;
-    article_count: string;
+    article_count: number;
   };
   type Result_AddAuthor = Result__<{ id: number }>;
 

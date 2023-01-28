@@ -56,7 +56,7 @@ export async function deleteAuthor(
   options?: { [key: string]: any },
 ) {
   return request<AuthorAPI.Result_DeleteAuthor>("/api/cms/author", {
-    method: "GET",
+    method: "DELETE",
     params: {
       ...params,
     },
