@@ -12,7 +12,7 @@ import {
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import services from "@/services";
 
-const { queryArticleList, queryLabel, deleteArticle } =
+const { queryArticleList, queryLabel, queryAuthor, deleteArticle } =
   services.ArticleController;
 
 /**
@@ -37,7 +37,6 @@ const handleRemove = async (articleId: number) => {
 
 /**
  *  获取文章标签和类型
- * @param selectedRows
  */
 export const getLabelAndSubTab = async () => {
   const {
@@ -48,6 +47,20 @@ export const getLabelAndSubTab = async () => {
     labelOptions.push({ label: name, value: name, labels });
   });
   return labelOptions;
+};
+
+/**
+ *  获取作者列表
+ */
+export const getAuthors = async () => {
+  const {
+    data: { list },
+  } = await queryAuthor();
+  const authorOptions: DefaultOptionType[] = [];
+  list.forEach(({ id, username }) => {
+    authorOptions.push({ label: username, value: id });
+  });
+  return authorOptions;
 };
 
 /**
@@ -116,13 +129,16 @@ const ArticleList: React.FC<unknown> = () => {
       align: "center",
       hideInSearch: true,
       width: 160,
-      render: (text, record) => (
-        <img
-          style={{ width: 60, height: 40 }}
-          src={`${text}`}
-          alt={record.title}
-        />
-      ),
+      render: (text, record) =>
+        text === "-" ? (
+          "-"
+        ) : (
+          <img
+            style={{ width: 60, height: 40 }}
+            src={`${text}`}
+            alt={record.title}
+          />
+        ),
     },
     {
       title: "作者",
@@ -130,6 +146,7 @@ const ArticleList: React.FC<unknown> = () => {
       align: "center",
       hideInSearch: true,
       width: 180,
+      render: (_, record) => record.author.username,
     },
     {
       title: "阅读数",
