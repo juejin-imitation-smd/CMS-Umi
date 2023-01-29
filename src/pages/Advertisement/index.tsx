@@ -80,13 +80,24 @@ const AdvertisementList: React.FC<unknown> = () => {
       align: "center",
       hideInSearch: true,
       width: 160,
-      render: (text, record) => (
-        <img
-          style={{ width: 60, height: 40 }}
-          src={`${text}`}
-          alt={record.title}
-        />
-      ),
+      render: (text, record) =>
+        text === "-" ? (
+          "-"
+        ) : (
+          <img
+            style={{ width: 60, height: 40 }}
+            src={`${text}`}
+            alt={record.title}
+          />
+        ),
+    },
+    {
+      title: "作者",
+      dataIndex: "author",
+      align: "center",
+      hideInSearch: true,
+      width: 180,
+      render: (_, record) => record.author.username,
     },
     {
       title: "阅读数",

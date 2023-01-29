@@ -2,17 +2,23 @@ import React, { useState } from "react";
 import { useNavigate } from "@umijs/max";
 import { Rule } from "antd/es/form";
 import { now } from "@/utils/format";
+import { getAuthors } from "@/pages/Article/index";
 import { Button, message } from "antd";
 import {
   PageContainer,
   ProForm,
   ProFormText,
+  ProFormSelect,
+  ProFormUploadButton,
 } from "@ant-design/pro-components";
 import { MdEditor } from "@/components/MdRender";
 import services from "@/services";
 import style from "./index.module.less";
 
 const { addAdvertisement } = services.AdvertisementController;
+const { uploadFile } = services.FileController;
+
+const authorOption = await getAuthors();
 
 const rules: Rule[] = [{ required: true }];
 
@@ -20,14 +26,19 @@ const AddAdvertisement: React.FC = () => {
   const navigate = useNavigate();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
 
   const onSubmit = () => {
-    // TODO：作者id
     form.validateFields().then(async (values) => {
+      let image = "";
+      if (coverFile !== null) {
+        const { data } = await uploadFile(coverFile);
+        image = data.path;
+      }
       const body = {
         ...values,
-        author_id: 2,
         content,
+        image,
         time: now(),
         view_count: 0,
         like_count: 0,
@@ -56,8 +67,40 @@ const AddAdvertisement: React.FC = () => {
       }}
       content={
         <ProForm form={form} grid submitter={{ render: () => null }}>
-          <ProFormText label="标题" name="title" rules={rules} />
-          <ProFormText label="图片地址" name="image" />
+          <ProFormText
+            colProps={{ md: 12, xl: 12 }}
+            label="标题"
+            name="title"
+            rules={rules}
+          />
+          <ProFormSelect
+            colProps={{ md: 12, xl: 12 }}
+            label="作者"
+            name="author_id"
+            rules={rules}
+            fieldProps={{
+              options: authorOption,
+            }}
+          />
+          <ProFormUploadButton
+            title="选择封面"
+            max={1}
+            fieldProps={{
+              listType: "picture-card",
+              beforeUpload(file) {
+                const isJpgOrPng =
+                  file.type === "image/jpeg" || file.type === "image/png";
+                if (!isJpgOrPng) {
+                  message.error("请选择 JPG/PNG 格式的文件!");
+                }
+                setCoverFile(file);
+                return false;
+              },
+              onRemove() {
+                setCoverFile(null);
+              },
+            }}
+          />
         </ProForm>
       }
     >
