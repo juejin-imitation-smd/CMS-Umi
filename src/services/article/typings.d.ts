@@ -1,4 +1,13 @@
 declare namespace ArticleAPI {
+  interface Result_PageInfo_AuthorInfo {
+    code: number;
+    msg: string;
+    data: PageInfo_AuthorInfo;
+  }
+  interface PageInfo_AuthorInfo {
+    total: number;
+    list: Array<AuthorInfo>;
+  }
   interface Result_PageInfo_LabelInfo {
     code: number;
     msg: string;
@@ -47,6 +56,13 @@ declare namespace ArticleAPI {
   interface SubTabsInfo {
     id: number;
     label: string;
+  }
+  interface AuthorInfo {
+    id: number;
+    article_count: number;
+    avatar: string;
+    description: string;
+    username: string;
   }
   interface ArticleInfoVO {
     author_id: number;

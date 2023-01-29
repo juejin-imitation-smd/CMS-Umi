@@ -4,6 +4,7 @@ import * as ArticleController from "./article/ArticleController";
 import * as AuthorController from "./author/AuthorController";
 import * as CategoryController from "./category/CategoryController";
 import * as LoginController from "./login/LoginController";
+import * as FileController from "./file/FileController";
 
 export default {
   UserController,
@@ -12,4 +13,5 @@ export default {
   ArticleController,
   AuthorController,
   LoginController,
+  FileController,
 };

@@ -81,3 +81,16 @@ export async function queryLabel(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+
+// 获取作者
+export async function queryAuthor(options?: { [key: string]: any }) {
+  return request<ArticleAPI.Result_PageInfo_AuthorInfo>("/api/cms/author", {
+    method: "GET",
+    params: {
+      page: "",
+      size: "",
+      username: "",
+    },
+    ...(options || {}),
+  });
+}
