@@ -6,6 +6,7 @@ import {
   ProColumns,
   FooterToolbar,
   ProFormInstance,
+  ProFormUploadButton,
 } from "@ant-design/pro-components";
 import {
   addAuthor,
@@ -90,10 +91,16 @@ const AuthorPage: React.FC<unknown> = () => {
   const handleUpdateModalOpen = async (record: AuthorAPI.AuthorInfo) => {
     handleUpdateModalVisible(true);
     setTimeout(() => {
+      const _record = JSON.parse(JSON.stringify(record));
       if (updateModalRef.current) {
-        updateModalRef.current.setFieldsValue(record);
+        _record.avatar = [
+          {
+            url: _record.avatar,
+          },
+        ] as any;
+        updateModalRef.current.setFieldsValue(_record);
         handleUpdateModalResetCache.current = () => {
-          updateModalRef.current?.setFieldsValue(record);
+          updateModalRef.current?.setFieldsValue(_record);
         };
       }
     }, 0);
@@ -101,6 +108,10 @@ const AuthorPage: React.FC<unknown> = () => {
 
   /* updateModal-保存模态框数据修改 */
   const handleUpdateModalSave = async (author: AuthorAPI.AuthorInfo) => {
+    author.avatar =
+      (author.avatar &&
+        ((author.avatar as any)[0]?.response.data.path as string)) ??
+      " ";
     const { success, msg } = await handleAuthorUpdate(author);
     if (success) {
       handleUpdateModalVisible(false);
@@ -113,6 +124,10 @@ const AuthorPage: React.FC<unknown> = () => {
 
   /* editModal-新建作者 */
   const handleEditFromEnter = async (author: AuthorAPI.AuthorInfo) => {
+    author.avatar =
+      (author.avatar &&
+        ((author.avatar as any)[0]?.response.data.path as string)) ??
+      " ";
     const { success, msg } = await handleAuthorAdd(author);
     if (success) {
       handleEditModalVisible(false);
@@ -187,9 +202,37 @@ const AuthorPage: React.FC<unknown> = () => {
     {
       title: "头像",
       dataIndex: "avatar",
-      valueType: "image",
+      formItemProps: {
+        valuePropName: "fileList",
+        getValueFromEvent(e) {
+          return Array.isArray(e) ? e : e && e.fileList;
+        },
+        rules: [
+          {
+            required: true,
+          },
+        ],
+      },
       render: (_, record) => (
         <Avatar size={40} shape="square" src={record.avatar} />
+      ),
+      renderFormItem: () => (
+        <ProFormUploadButton
+          title="选择头像"
+          max={1}
+          action="http://47.96.134.75:3000/api/upload"
+          fieldProps={{
+            listType: "picture-card",
+            accept: ".jpg,.png,.webp",
+            beforeUpload(file) {
+              const support = ["image/jpeg", "image/png", "image/webp"];
+              if (!support.includes(file.type)) {
+                message.error("请选择 JPG/PNG/WEBP 格式的文件");
+                return false;
+              }
+            },
+          }}
+        />
       ),
       hideInSearch: true,
       width: 60,
@@ -210,6 +253,14 @@ const AuthorPage: React.FC<unknown> = () => {
       dataIndex: "description",
       hideInSearch: true,
       width: 400,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            whitespace: true,
+          },
+        ],
+      },
       ellipsis: true,
     },
     {
