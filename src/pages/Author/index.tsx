@@ -253,6 +253,14 @@ const AuthorPage: React.FC<unknown> = () => {
       dataIndex: "description",
       hideInSearch: true,
       width: 400,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            whitespace: true,
+          },
+        ],
+      },
       ellipsis: true,
     },
     {
