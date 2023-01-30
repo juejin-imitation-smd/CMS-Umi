@@ -1,3 +1,4 @@
+import { useNavigate } from "@umijs/max";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import {
   LoginForm,
@@ -11,10 +12,10 @@ import styles from "./index.module.less";
 const { login } = services.LoginController;
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const onLogin = async (values: LoginAPI.LoginInfoVO) => {
-    let userInfo = await login(values);
-
-    console.log(userInfo, document.cookie);
+    await login(values);
+    navigate("/");
   };
   return (
     <ProConfigProvider hashed={false}>
