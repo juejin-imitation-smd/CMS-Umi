@@ -14,3 +14,16 @@ declare namespace LoginAPI {
     password: string;
   }
 }
+
+declare namespace RegisterAPI {
+  interface Result_RegisterInfo {
+    code: number;
+    msg: string;
+    data: null;
+  }
+  interface RegisterVO {
+    user_name: string;
+    password: string;
+    repeat_password: string;
+  }
+}

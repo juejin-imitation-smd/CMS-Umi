@@ -32,7 +32,7 @@ export const layout: RunTimeLayoutConfig = () => {
 
 export const request: RequestConfig = {
   baseURL,
-  timeout: 3000,
+  timeout: 5000,
   // other axios options you want
   errorConfig: {
     errorHandler() {},
