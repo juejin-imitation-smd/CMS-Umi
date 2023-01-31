@@ -1,5 +1,6 @@
 import { useNavigate } from "@umijs/max";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { message } from "antd";
 import {
   LoginForm,
   ProFormCheckbox,
@@ -14,8 +15,9 @@ const { login } = services.LoginController;
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const onLogin = async (values: LoginAPI.LoginInfoVO) => {
-    await login(values);
-    navigate("/");
+    let { msg } = await login(values);
+    message.success(msg);
+    navigate("/home");
   };
   return (
     <ProConfigProvider hashed={false}>
@@ -66,8 +68,11 @@ const LoginPage: React.FC = () => {
               style={{
                 float: "right",
               }}
+              onClick={() => {
+                navigate("/register");
+              }}
             >
-              忘记密码
+              注册账号
             </a>
           </div>
         </LoginForm>
