@@ -5,6 +5,12 @@ const routes = [
     hideInMenu: true,
     menuRender: false,
   },
+  {
+    path: "/register",
+    component: "./Register",
+    hideInMenu: true,
+    menuRender: false,
+  },
   { path: "/", redirect: "/home" },
   {
     name: "首页",
