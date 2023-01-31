@@ -17,7 +17,7 @@ export async function getInitialState(): Promise<{ name: string }> {
 
 export const layout: RunTimeLayoutConfig = () => {
   return {
-    logo: "https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg",
+    logo: "https://lf3-cdn-tos.bytescm.com/obj/static/xitu_juejin_web/6c61ae65d1c41ae8221a670fa32d05aa.svg",
     menu: {
       locale: false,
     },

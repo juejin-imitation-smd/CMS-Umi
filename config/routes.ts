@@ -11,38 +11,22 @@ const routes = [
     path: "/home",
     component: "./Home",
     icon: "HomeFilled",
-    routes: [
-      {
-        name: "首页-子路由",
-        path: "/home/404",
-        component: "./NotFound",
-      },
-    ],
-  },
-  {
-    name: "权限演示",
-    path: "/access",
-    component: "./Access",
-    access: "canReadPageA",
-  },
-  {
-    name: " CRUD 示例",
-    path: "/table",
-    component: "./Table",
   },
   {
     name: "文章管理",
     path: "/article",
     component: "./Article",
-    icon: "User",
+    icon: "Highlight",
   },
   {
+    name: "添加文章",
     path: "/article/add",
     component: "./Article/Add",
     hideInMenu: true,
     menuRender: false,
   },
   {
+    name: "编辑文章",
     path: "/article/edit/:id",
     component: "./Article/Edit",
     hideInMenu: true,
@@ -52,15 +36,17 @@ const routes = [
     name: "广告管理",
     path: "/advertisement",
     component: "./Advertisement",
-    icon: "User",
+    icon: "Snippets",
   },
   {
+    name: "添加广告",
     path: "/advertisement/add",
     component: "./Advertisement/Add",
     hideInMenu: true,
     menuRender: false,
   },
   {
+    name: "编辑广告",
     path: "/advertisement/edit/:id",
     component: "./Advertisement/Edit",
     hideInMenu: true,
@@ -77,11 +63,6 @@ const routes = [
     path: "/category",
     component: "./Category",
     icon: "Tags",
-  },
-  {
-    name: "md渲染器测试",
-    path: "/mdrender",
-    component: "./MdRender",
   },
   {
     name: "404",
