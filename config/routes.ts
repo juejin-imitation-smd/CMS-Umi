@@ -16,7 +16,7 @@ const routes = [
     name: "首页",
     path: "/home",
     component: "./Home",
-    icon: "HomeFilled",
+    icon: "Home",
   },
   {
     name: "文章管理",
@@ -69,6 +69,12 @@ const routes = [
     path: "/category",
     component: "./Category",
     icon: "Tags",
+  },
+  {
+    name: "首页路由管理",
+    path: "/route",
+    component: "./Route",
+    icon: "Link",
   },
   {
     name: "404",

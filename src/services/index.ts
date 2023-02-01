@@ -6,6 +6,7 @@ import * as CategoryController from "./category/CategoryController";
 import * as LoginController from "./login/LoginController";
 import * as RegisterController from "./login/RegisterController";
 import * as FileController from "./file/FileController";
+import * as RouteController from "./route/RouteController";
 
 export default {
   UserController,
@@ -16,4 +17,5 @@ export default {
   LoginController,
   RegisterController,
   FileController,
+  RouteController,
 };
