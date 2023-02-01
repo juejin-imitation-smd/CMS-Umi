@@ -4,7 +4,7 @@ import { request } from "@umijs/max";
  * @Description: 查询路由
  */
 export async function queryRouteList(
-  params: null,
+  params?: null,
   options?: { [key: string]: any },
 ) {
   return request<RouteAPI.Result_CheckRoute>("/api/cms/route", {
