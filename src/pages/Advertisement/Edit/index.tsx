@@ -122,6 +122,7 @@ const EditArticle: React.FC = () => {
                   file.type === "image/jpeg" || file.type === "image/png";
                 if (!isJpgOrPng) {
                   message.error("请选择 JPG/PNG 格式的文件!");
+                  return false;
                 }
                 setFileList(list);
                 return false;

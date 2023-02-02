@@ -3,7 +3,7 @@ import { useNavigate } from "@umijs/max";
 import { Rule } from "antd/es/form";
 import { now } from "@/utils/format";
 import { getAuthors } from "@/pages/Article/index";
-import { Button, message } from "antd";
+import { Button, message, UploadFile } from "antd";
 import {
   PageContainer,
   ProForm,
@@ -26,14 +26,16 @@ const AddAdvertisement: React.FC = () => {
   const navigate = useNavigate();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
-  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const onSubmit = () => {
     form.validateFields().then(async (values) => {
       let image = "";
-      if (coverFile !== null) {
-        const { data } = await uploadFile(coverFile);
-        image = data.path;
+      if (fileList.length > 0) {
+        if (fileList[0] instanceof File) {
+          const { data } = await uploadFile(fileList[0]);
+          image = data.path;
+        }
       }
       const body = {
         ...values,
@@ -86,18 +88,20 @@ const AddAdvertisement: React.FC = () => {
             title="选择封面"
             max={1}
             fieldProps={{
+              fileList: fileList,
               listType: "picture-card",
-              beforeUpload(file) {
+              beforeUpload(file, list) {
                 const isJpgOrPng =
                   file.type === "image/jpeg" || file.type === "image/png";
                 if (!isJpgOrPng) {
                   message.error("请选择 JPG/PNG 格式的文件!");
+                  return false;
                 }
-                setCoverFile(file);
+                setFileList(list);
                 return false;
               },
               onRemove() {
-                setCoverFile(null);
+                setFileList([]);
               },
             }}
           />
