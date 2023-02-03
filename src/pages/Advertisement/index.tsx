@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useNavigate } from "@umijs/max";
-import { formatTime } from "@/utils/format";
+import dayjs from "dayjs";
 import { Button, Space, Popconfirm, message } from "antd";
 import {
   ActionType,
@@ -64,7 +64,7 @@ const AdvertisementList: React.FC<unknown> = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 160,
-      render: (_, record) => formatTime(+record.time),
+      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD hh:mm:ss"),
     },
     {
       title: "内容",

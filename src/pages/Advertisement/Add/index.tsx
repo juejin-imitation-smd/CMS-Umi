@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "@umijs/max";
 import { Rule } from "antd/es/form";
-import { now } from "@/utils/format";
 import { getAuthors } from "@/pages/Article/index";
 import { Button, message, UploadFile } from "antd";
 import {
@@ -10,6 +9,7 @@ import {
   ProFormText,
   ProFormSelect,
   ProFormUploadButton,
+  ProFormDateTimePicker,
 } from "@ant-design/pro-components";
 import { MdEditor } from "@/components/MdRender";
 import services from "@/services";
@@ -41,7 +41,7 @@ const AddAdvertisement: React.FC = () => {
         ...values,
         content,
         image,
-        time: now(),
+        time: +values.time.format("x"),
         view_count: 0,
         like_count: 0,
         comment_count: 0,
@@ -103,6 +103,14 @@ const AddAdvertisement: React.FC = () => {
               onRemove() {
                 setFileList([]);
               },
+            }}
+          />
+          <ProFormDateTimePicker
+            label="发布时间"
+            name="time"
+            rules={rules}
+            fieldProps={{
+              format: (value) => value.format("YYYY-MM-DD hh:mm:ss"),
             }}
           />
         </ProForm>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "@umijs/max";
+import dayjs from "dayjs";
 import { Rule } from "antd/es/form";
 import type { UploadFile } from "antd/es/upload/interface";
 import { DefaultOptionType } from "antd/es/select";
@@ -12,6 +13,7 @@ import {
   ProFormSelect,
   ProFormDigit,
   ProFormUploadButton,
+  ProFormDateTimePicker,
 } from "@ant-design/pro-components";
 import { MdEditor } from "@/components/MdRender";
 import services from "@/services";
@@ -26,10 +28,13 @@ const authorOption = await getAuthors();
 const rules: Rule[] = [{ required: true }];
 
 const EditArticle: React.FC = () => {
+  console.log(dayjs(1675394877000).format("YYYY-MM-DD hh:mm:ss"));
+
   const navigate = useNavigate();
   const { id = "0" } = useParams();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
+  const [] = useState<string>("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [subTabOption, setSubTabOption] = useState<DefaultOptionType[]>([]);
 
@@ -60,6 +65,7 @@ const EditArticle: React.FC = () => {
         id: +id,
         content,
         image,
+        time: +values.time.format("x"),
       };
       await modifyArticle(body);
       message.success("提交成功");
@@ -106,6 +112,7 @@ const EditArticle: React.FC = () => {
             return {
               ...article,
               author_id: article.author.id,
+              time: dayjs(+article.time).format("YYYY-MM-DD hh:mm:ss"),
             };
           }}
         >
@@ -166,7 +173,7 @@ const EditArticle: React.FC = () => {
             }}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="阅读数"
             name="view_count"
             min={0}
@@ -174,7 +181,7 @@ const EditArticle: React.FC = () => {
             rules={rules}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="点赞数"
             name="like_count"
             min={0}
@@ -182,12 +189,21 @@ const EditArticle: React.FC = () => {
             rules={rules}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="评论数"
             name="comment_count"
             min={0}
             fieldProps={{ precision: 0 }}
             rules={rules}
+          />
+          <ProFormDateTimePicker
+            colProps={{ md: 12, xl: 6 }}
+            label="发布时间"
+            name="time"
+            rules={rules}
+            fieldProps={{
+              format: (value) => value.format("YYYY-MM-DD hh:mm:ss"),
+            }}
           />
         </ProForm>
       }

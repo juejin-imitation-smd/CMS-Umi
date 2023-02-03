@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useNavigate } from "@umijs/max";
+import dayjs from "dayjs";
 import { DefaultOptionType } from "antd/es/select";
-import { formatTime } from "@/utils/format";
 import { Button, Space, Tag, Popconfirm, message } from "antd";
 import {
   ActionType,
@@ -93,7 +93,7 @@ const ArticleList: React.FC<unknown> = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 160,
-      render: (_, record) => formatTime(+record.time),
+      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD hh:mm:ss"),
     },
     {
       title: "分类",
