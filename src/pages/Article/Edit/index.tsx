@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "@umijs/max";
+import dayjs from "dayjs";
 import { Rule } from "antd/es/form";
 import type { UploadFile } from "antd/es/upload/interface";
 import { DefaultOptionType } from "antd/es/select";
@@ -12,6 +13,7 @@ import {
   ProFormSelect,
   ProFormDigit,
   ProFormUploadButton,
+  ProFormDateTimePicker,
 } from "@ant-design/pro-components";
 import { MdEditor } from "@/components/MdRender";
 import services from "@/services";
@@ -30,6 +32,7 @@ const EditArticle: React.FC = () => {
   const { id = "0" } = useParams();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
+  const [theme, setTheme] = useState<string>("juejin");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [subTabOption, setSubTabOption] = useState<DefaultOptionType[]>([]);
 
@@ -59,7 +62,9 @@ const EditArticle: React.FC = () => {
         ...values,
         id: +id,
         content,
+        theme,
         image,
+        time: +values.time.format("x"),
       };
       await modifyArticle(body);
       message.success("提交成功");
@@ -92,6 +97,7 @@ const EditArticle: React.FC = () => {
               data: { article },
             } = await getArticleDetail({ id: +id });
             setContent(article.content);
+            setTheme(article.theme);
             labelChange(article.label);
             if (article.image) {
               setFileList([
@@ -106,6 +112,7 @@ const EditArticle: React.FC = () => {
             return {
               ...article,
               author_id: article.author.id,
+              time: dayjs(+article.time),
             };
           }}
         >
@@ -155,6 +162,7 @@ const EditArticle: React.FC = () => {
                   file.type === "image/jpeg" || file.type === "image/png";
                 if (!isJpgOrPng) {
                   message.error("请选择 JPG/PNG 格式的文件!");
+                  return false;
                 }
                 setFileList(list);
                 return false;
@@ -165,7 +173,7 @@ const EditArticle: React.FC = () => {
             }}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="阅读数"
             name="view_count"
             min={0}
@@ -173,7 +181,7 @@ const EditArticle: React.FC = () => {
             rules={rules}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="点赞数"
             name="like_count"
             min={0}
@@ -181,12 +189,21 @@ const EditArticle: React.FC = () => {
             rules={rules}
           />
           <ProFormDigit
-            colProps={{ md: 12, xl: 8 }}
+            colProps={{ md: 12, xl: 6 }}
             label="评论数"
             name="comment_count"
             min={0}
             fieldProps={{ precision: 0 }}
             rules={rules}
+          />
+          <ProFormDateTimePicker
+            colProps={{ md: 12, xl: 6 }}
+            label="发布时间"
+            name="time"
+            rules={rules}
+            fieldProps={{
+              format: (value) => value.format("YYYY-MM-DD hh:mm:ss"),
+            }}
           />
         </ProForm>
       }
@@ -199,6 +216,8 @@ const EditArticle: React.FC = () => {
         onChange={(v) => {
           setContent(v);
         }}
+        themeName={theme}
+        setThemeName={setTheme}
       />
       <Button type="primary" onClick={onSubmit} style={{ marginTop: 10 }}>
         提交

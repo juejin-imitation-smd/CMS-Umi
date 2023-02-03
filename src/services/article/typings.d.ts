@@ -40,6 +40,7 @@ declare namespace ArticleAPI {
     label: string;
     sub_tabs: Array<string>;
     content: string;
+    theme: string;
     image: string;
     author_id: number;
     author: AuthorAPI.AuthorInfo;
@@ -71,13 +72,10 @@ declare namespace ArticleAPI {
     label: string;
     sub_tabs: Array<string>;
     content: string;
+    theme: string;
     image: string;
     view_count: number;
     like_count: number;
     comment_count: number;
   }
-  // interface PageInfo_ArticleInfoVO {
-  //   page: number;
-  //   size: number;
-  // }
 }

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "@umijs/max";
 import { Rule } from "antd/es/form";
-import { now } from "@/utils/format";
 import { DefaultOptionType } from "antd/es/select";
 import { getLabelAndSubTab, getAuthors } from "../index";
-import { Button, message } from "antd";
+import { Button, message, UploadFile } from "antd";
 import {
   PageContainer,
   ProForm,
   ProFormText,
   ProFormSelect,
   ProFormUploadButton,
+  ProFormDateTimePicker,
 } from "@ant-design/pro-components";
 import { MdEditor } from "@/components/MdRender";
 import services from "@/services";
@@ -28,7 +28,9 @@ const AddArticle: React.FC = () => {
   const navigate = useNavigate();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
-  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [theme, setTheme] = useState<string>("juejin");
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [subTabOption, setSubTabOption] = useState<DefaultOptionType[]>([]);
 
   const labelChange = (value: number) => {
@@ -45,15 +47,18 @@ const AddArticle: React.FC = () => {
   const onSubmit = () => {
     form.validateFields().then(async (values) => {
       let image = "";
-      if (coverFile !== null) {
-        const { data } = await uploadFile(coverFile);
-        image = data.path;
+      if (fileList.length > 0) {
+        if (fileList[0] instanceof File) {
+          const { data } = await uploadFile(fileList[0]);
+          image = data.path;
+        }
       }
       const body = {
         ...values,
         content,
+        theme,
         image,
-        time: now(),
+        time: +values.time.format("x"),
         view_count: 0,
         like_count: 0,
         comment_count: 0,
@@ -120,19 +125,29 @@ const AddArticle: React.FC = () => {
             title="选择封面"
             max={1}
             fieldProps={{
+              fileList: fileList,
               listType: "picture-card",
-              beforeUpload(file) {
+              beforeUpload(file, list) {
                 const isJpgOrPng =
                   file.type === "image/jpeg" || file.type === "image/png";
                 if (!isJpgOrPng) {
                   message.error("请选择 JPG/PNG 格式的文件!");
+                  return false;
                 }
-                setCoverFile(file);
+                setFileList(list);
                 return false;
               },
               onRemove() {
-                setCoverFile(null);
+                setFileList([]);
               },
+            }}
+          />
+          <ProFormDateTimePicker
+            label="发布时间"
+            name="time"
+            rules={rules}
+            fieldProps={{
+              format: (value) => value.format("YYYY-MM-DD hh:mm:ss"),
             }}
           />
         </ProForm>
@@ -146,6 +161,8 @@ const AddArticle: React.FC = () => {
         onChange={(v) => {
           setContent(v);
         }}
+        themeName={theme}
+        setThemeName={setTheme}
       />
       <Button type="primary" onClick={onSubmit} style={{ marginTop: 10 }}>
         提交

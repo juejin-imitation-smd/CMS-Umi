@@ -25,6 +25,7 @@ declare namespace AdvertisementInfoAPI {
     title: string;
     time: string;
     content: string;
+    theme: string;
     image: string;
     author_id: number;
     author: AuthorAPI.AuthorInfo;
@@ -34,8 +35,14 @@ declare namespace AdvertisementInfoAPI {
   }
   interface AdvertisementInfoVO {
     title?: string;
+    time: string;
     content?: string;
+    theme: string;
     image?: string;
+    author_id: number;
+    view_count?: number;
+    like_count?: number;
+    comment_count?: number;
   }
   interface PageInfo_AdvertisementInfoVO {
     page: number;

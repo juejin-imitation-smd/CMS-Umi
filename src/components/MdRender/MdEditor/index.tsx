@@ -12,27 +12,30 @@ import { Editor } from "@bytemd/react";
 
 import zhHans from "bytemd/locales/zh_Hans.json";
 
-const plugins: Array<BytemdPlugin> = [
-  breaks(),
-  frontmatter(),
-  gemoji(),
-  image(),
-  gfm(),
-  math(),
-  theme(),
-  mermaid(),
-  mediumZoom(),
-];
-
 interface Props {
   value: string;
   onChange: (value: string) => void;
+  themeName: string;
+  setThemeName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 /**
  * md编辑器组件
  */
 const MdEditor: React.FC<Props> = (props) => {
+  const { themeName, setThemeName } = props;
+  const plugins: Array<BytemdPlugin> = [
+    breaks(),
+    frontmatter(),
+    gemoji(),
+    image(),
+    gfm(),
+    math(),
+    theme({ themeName, setThemeName }),
+    mermaid(),
+    mediumZoom(),
+  ];
+
   return <Editor {...props} plugins={plugins} locale={zhHans} />;
 };
 

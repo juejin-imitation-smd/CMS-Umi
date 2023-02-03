@@ -12,10 +12,18 @@ export const changeThemeStyle: (style: string) => void = (style) => {
   document.head.appendChild(styleDOM);
 };
 
+interface Props {
+  themeName: string;
+  setThemeName: React.Dispatch<React.SetStateAction<string>>;
+}
+
 /**
  * 主题切换插件
  */
-export default function theme(themeName = "juejin"): BytemdPlugin {
+export default function theme({
+  themeName,
+  setThemeName,
+}: Props): BytemdPlugin {
   changeThemeStyle(styles[themeName].style);
 
   const actionItems = Object.entries(styles).map((item) => {
@@ -38,6 +46,7 @@ export default function theme(themeName = "juejin"): BytemdPlugin {
             handler: {
               type: "action",
               click({}) {
+                setThemeName(title);
                 changeThemeStyle(style);
               },
             },
