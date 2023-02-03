@@ -17,6 +17,7 @@ specifiers:
   '@umijs/max': ^4.0.44
   antd: ^5.0.0
   bytemd: ^1.20.0
+  dayjs: ^1.11.7
   eslint: ^8.31.0
   husky: ^8.0.1
   lint-staged: ^13.0.3
@@ -39,6 +40,7 @@ dependencies:
   '@umijs/max': 4.0.44_u2bwqobq6pw4mtjb6z4jnwx26y
   antd: 5.1.4
   bytemd: 1.20.0
+  dayjs: 1.11.7
 
 devDependencies:
   '@types/react': 18.0.26
