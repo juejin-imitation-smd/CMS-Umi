@@ -98,7 +98,7 @@ const EditArticle: React.FC = () => {
             return {
               ...advertisement,
               author_id: advertisement.author.id,
-              time: dayjs(+advertisement.time).format("YYYY-MM-DD hh:mm:ss"),
+              time: dayjs(+advertisement.time),
             };
           }}
         >

@@ -28,8 +28,6 @@ const authorOption = await getAuthors();
 const rules: Rule[] = [{ required: true }];
 
 const EditArticle: React.FC = () => {
-  console.log(dayjs(1675394877000).format("YYYY-MM-DD hh:mm:ss"));
-
   const navigate = useNavigate();
   const { id = "0" } = useParams();
   const [form] = ProForm.useForm();
@@ -114,7 +112,7 @@ const EditArticle: React.FC = () => {
             return {
               ...article,
               author_id: article.author.id,
-              time: dayjs(+article.time).format("YYYY-MM-DD hh:mm:ss"),
+              time: dayjs(+article.time),
             };
           }}
         >
