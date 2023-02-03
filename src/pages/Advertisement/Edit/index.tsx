@@ -31,6 +31,7 @@ const EditArticle: React.FC = () => {
   const { id = "0" } = useParams();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
+  const [theme, setTheme] = useState<string>("juejin");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const onSubmit = () => {
@@ -48,6 +49,7 @@ const EditArticle: React.FC = () => {
         ...values,
         id: +id,
         content,
+        theme,
         image,
         time: +values.time.format("x"),
       };
@@ -82,6 +84,7 @@ const EditArticle: React.FC = () => {
               data: { advertisement },
             } = await getAdvertisementDetail({ id: +id });
             setContent(advertisement.content);
+            setTheme(advertisement.theme);
             if (advertisement.image) {
               setFileList([
                 {
@@ -179,6 +182,8 @@ const EditArticle: React.FC = () => {
         onChange={(v) => {
           setContent(v);
         }}
+        themeName={theme}
+        setThemeName={setTheme}
       />
       <Button type="primary" onClick={onSubmit} style={{ marginTop: 10 }}>
         提交

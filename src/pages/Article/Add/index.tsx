@@ -28,6 +28,8 @@ const AddArticle: React.FC = () => {
   const navigate = useNavigate();
   const [form] = ProForm.useForm();
   const [content, setContent] = useState<string>("");
+  const [theme, setTheme] = useState<string>("juejin");
+
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [subTabOption, setSubTabOption] = useState<DefaultOptionType[]>([]);
 
@@ -54,6 +56,7 @@ const AddArticle: React.FC = () => {
       const body = {
         ...values,
         content,
+        theme,
         image,
         time: +values.time.format("x"),
         view_count: 0,
@@ -158,6 +161,8 @@ const AddArticle: React.FC = () => {
         onChange={(v) => {
           setContent(v);
         }}
+        themeName={theme}
+        setThemeName={setTheme}
       />
       <Button type="primary" onClick={onSubmit} style={{ marginTop: 10 }}>
         提交
