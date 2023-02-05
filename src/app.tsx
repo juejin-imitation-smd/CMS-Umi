@@ -28,6 +28,12 @@ export const layout: RunTimeLayoutConfig = () => {
     menu: {
       locale: false,
     },
+    logout: () => {
+      if (sessionStorage.getItem("userInfo")) {
+        sessionStorage.setItem("userInfo", "");
+        window.location.href = "/login";
+      }
+    },
 
     /* 面包屑配置 */
     breadcrumbRender: (routes: Route[] = []) => {

@@ -15,9 +15,10 @@ const { login } = services.LoginController;
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const onLogin = async (values: LoginAPI.LoginInfoVO) => {
-    let { msg } = await login(values);
+    let { msg, data } = await login(values);
+    sessionStorage.setItem("userInfo", JSON.stringify(data));
     message.success(msg);
-    navigate("/home");
+    navigate("/");
   };
   return (
     <ProConfigProvider hashed={false}>
@@ -69,10 +70,10 @@ const LoginPage: React.FC = () => {
                 float: "right",
               }}
               onClick={() => {
-                navigate("/register");
+                // navigate("/register");
               }}
             >
-              注册账号
+              忘记密码
             </a>
           </div>
         </LoginForm>
