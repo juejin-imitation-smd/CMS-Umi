@@ -11,18 +11,24 @@ const routes = [
     hideInMenu: true,
     menuRender: false,
   },
-  { path: "/", redirect: "/home" },
+  {
+    path: "/",
+    redirect: "/home",
+    wrappers: ["@/wrappers/auth"],
+  },
   {
     name: "首页",
     path: "/home",
     component: "./Home",
     icon: "Home",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "文章管理",
     path: "/article",
     component: "./Article",
     icon: "Highlight",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "添加文章",
@@ -30,6 +36,7 @@ const routes = [
     component: "./Article/Add",
     hideInMenu: true,
     menuRender: false,
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "编辑文章",
@@ -37,12 +44,14 @@ const routes = [
     component: "./Article/Edit",
     hideInMenu: true,
     menuRender: false,
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "广告管理",
     path: "/advertisement",
     component: "./Advertisement",
     icon: "Snippets",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "添加广告",
@@ -50,6 +59,7 @@ const routes = [
     component: "./Advertisement/Add",
     hideInMenu: true,
     menuRender: false,
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "编辑广告",
@@ -57,24 +67,28 @@ const routes = [
     component: "./Advertisement/Edit",
     hideInMenu: true,
     menuRender: false,
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "作者管理",
     path: "/author",
     component: "./Author",
     icon: "User",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "类别标签管理",
     path: "/category",
     component: "./Category",
     icon: "Tags",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "首页路由管理",
     path: "/route",
     component: "./Route",
     icon: "Link",
+    wrappers: ["@/wrappers/auth"],
   },
   {
     name: "404",

@@ -8,7 +8,8 @@ export default defineConfig({
   initialState: {},
   request: {},
   layout: {
-    title: "@JueJin/CMS",
+    title: "JueJin/CMS",
+    logout: () => {},
   },
   routes,
   npmClient: "pnpm",
