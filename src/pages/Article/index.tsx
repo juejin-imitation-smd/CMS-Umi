@@ -93,7 +93,7 @@ const ArticleList: React.FC<unknown> = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 160,
-      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD hh:mm:ss"),
+      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: "分类",
@@ -114,14 +114,6 @@ const ArticleList: React.FC<unknown> = () => {
             {item}
           </Tag>
         )),
-    },
-    {
-      title: "内容",
-      dataIndex: "content",
-      align: "center",
-      ellipsis: true,
-      hideInSearch: true,
-      width: 240,
     },
     {
       title: "封面",

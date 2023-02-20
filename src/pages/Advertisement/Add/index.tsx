@@ -112,7 +112,7 @@ const AddAdvertisement: React.FC = () => {
             name="time"
             rules={rules}
             fieldProps={{
-              format: (value) => value.format("YYYY-MM-DD hh:mm:ss"),
+              format: (value) => value.format("YYYY-MM-DD HH:mm:ss"),
             }}
           />
         </ProForm>

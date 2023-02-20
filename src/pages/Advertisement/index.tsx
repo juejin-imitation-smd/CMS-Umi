@@ -64,15 +64,7 @@ const AdvertisementList: React.FC<unknown> = () => {
       ellipsis: true,
       hideInSearch: true,
       width: 160,
-      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD hh:mm:ss"),
-    },
-    {
-      title: "内容",
-      dataIndex: "content",
-      align: "center",
-      ellipsis: true,
-      hideInSearch: true,
-      width: 240,
+      render: (_, record) => dayjs(+record.time).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: "封面",
